@@ -4,6 +4,9 @@ python:
 
 sudo: false
 
+install:
+- pip install nose
+
 script:
 - nosetests --with-coverage --cover-package=sssm
 
