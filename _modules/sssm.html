@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sssm &mdash; sssm Module 1.0.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="sssm Module 1.0.0 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../index.html" class="fa fa-home"> sssm Module</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">sssm Module</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>sssm</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <h1>Source code for sssm</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Super Simple Stock Market (SSSM) module for recording trades on a stock exchange and</span>
+<span class="sd">calculating prices and indexes</span>
+
+<span class="sd">Modules contains the following principal classes:</span>
+
+<span class="sd"> * Exchange: records trades</span>
+<span class="sd"> * Trade: a trade - buy or sell</span>
+<span class="sd"> * Stock, incl. CommonStock and PreferredStock: a stock to trade in</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span><span class="p">,</span> <span class="n">mul</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="nb">reduce</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">groupby</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+
+
+<div class="viewcode-block" id="Stock"><a class="viewcode-back" href="../index.html#sssm.Stock">[docs]</a><span class="k">class</span> <span class="nc">Stock</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A stock that can be traded on the Global Beverage Corporation Exchange</span>
+
+<span class="sd">    Should be sub-classed for common and preferred stock.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">last_div</span><span class="p">,</span> <span class="n">par_val</span><span class="p">,</span> <span class="n">fixed_div</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="c">#: Stock symbol, e.g. ``TEA``</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="c">#: Last dividend, in pence</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_div</span> <span class="o">=</span> <span class="n">last_div</span>
+        <span class="c">#: Par value, in pence</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">par_val</span> <span class="o">=</span> <span class="n">par_val</span>
+        <span class="c">#: Fixed dividend, percentage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixed_div</span> <span class="o">=</span> <span class="n">fixed_div</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;&lt;Stock object `{}`&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Stock.div_yield"><a class="viewcode-back" href="../index.html#sssm.Stock.div_yield">[docs]</a>    <span class="k">def</span> <span class="nf">div_yield</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the dividend yield for a given stock price</span>
+
+<span class="sd">        :param price: stock price, in pence</span>
+<span class="sd">        :type price: int or float</span>
+<span class="sd">        :return: dividend yield</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Stock.pe_ratio"><a class="viewcode-back" href="../index.html#sssm.Stock.pe_ratio">[docs]</a>    <span class="k">def</span> <span class="nf">pe_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the P/E ratio for a given stock price</span>
+
+<span class="sd">        :param price: stock price, in pence</span>
+<span class="sd">        :type price: int or float</span>
+<span class="sd">        :return: P/E ratio</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">div_yield</span><span class="p">(</span><span class="n">price</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="CommonStock"><a class="viewcode-back" href="../index.html#sssm.CommonStock">[docs]</a><span class="k">class</span> <span class="nc">CommonStock</span><span class="p">(</span><span class="n">Stock</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A common stock&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;&lt;CommonStock object `{}`&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">div_yield</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_div</span> <span class="o">/</span> <span class="n">price</span>
+
+</div>
+<div class="viewcode-block" id="PreferredStock"><a class="viewcode-back" href="../index.html#sssm.PreferredStock">[docs]</a><span class="k">class</span> <span class="nc">PreferredStock</span><span class="p">(</span><span class="n">Stock</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A preferred stock&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;&lt;PreferredStock object `{}`&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">div_yield</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_div</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_val</span> <span class="o">/</span> <span class="n">price</span>
+
+</div>
+<span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Direction of a trade (buy or sell)&quot;&quot;&quot;</span>
+    <span class="n">buy</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">sell</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+
+<div class="viewcode-block" id="Trade"><a class="viewcode-back" href="../index.html#sssm.Trade">[docs]</a><span class="k">class</span> <span class="nc">Trade</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A trade of a stock&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stock</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="c">#: Stock to buy or sell, :class:`sssm.Stock` object</span>
+        <span class="c"># Alternatively we could just record the stock&#39;s symbol as a (foreign) key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stock</span> <span class="o">=</span> <span class="n">stock</span>
+        <span class="c">#: Quantity to buy or sell</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quantity</span> <span class="o">=</span> <span class="n">quantity</span>
+        <span class="c">#: Either ``sssm.Action.buy`` or ``sssm.Action.sell``</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span>
+        <span class="c">#: Stock price</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">price</span> <span class="o">=</span> <span class="n">price</span>
+        <span class="c">#: Date/time of trade (UTC), set to current time automatically</span>
+        <span class="c"># Assume timestamp always correct when object created. Alternatively, this could</span>
+        <span class="c"># be implemented in the :func:`sssm.Exchange.record_trade` method if it&#39;s the role</span>
+        <span class="c"># of the exchange to timestamp trades.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;&lt;Trade object: {} {} of stock `{}`&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">stock</span><span class="o">.</span><span class="n">symbol</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Trade.vol_weighted_price"><a class="viewcode-back" href="../index.html#sssm.Trade.vol_weighted_price">[docs]</a>    <span class="k">def</span> <span class="nf">vol_weighted_price</span><span class="p">(</span><span class="n">trades</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the volume weighted price for a sequence of trades</span>
+
+<span class="sd">        :param trades: trades to obtained the averaged price over</span>
+<span class="sd">        :type trades: list of :class:`sssm.Trade`</span>
+<span class="sd">        :return: volume weighted price</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">price</span> <span class="o">*</span> <span class="n">t</span><span class="o">.</span><span class="n">quantity</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trades</span><span class="p">)</span> <span class="o">/</span>
+                <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">quantity</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trades</span><span class="p">))</span>
+
+</div></div>
+<div class="viewcode-block" id="Exchange"><a class="viewcode-back" href="../index.html#sssm.Exchange">[docs]</a><span class="k">class</span> <span class="nc">Exchange</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A stock exchange&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c">#: List of trades (:class:`sssm.Trade`)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trades</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;&lt;Exchange object: {} trades&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trades</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Exchange.record_trade"><a class="viewcode-back" href="../index.html#sssm.Exchange.record_trade">[docs]</a>    <span class="k">def</span> <span class="nf">record_trade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trade</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Record a trade on the stock exchange</span>
+
+<span class="sd">        :param trade: a single trade (buy or sell) of stocks</span>
+<span class="sd">        :type trade: :class:`sssm.Trade`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trades</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trade</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Exchange.price_by_stock"><a class="viewcode-back" href="../index.html#sssm.Exchange.price_by_stock">[docs]</a>    <span class="k">def</span> <span class="nf">price_by_stock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the volume weighted average price of a stock over a certain duration</span>
+
+<span class="sd">        :param symbol: stock symbol, e.g. ``TEA``</span>
+<span class="sd">        :type symbol: str</span>
+<span class="sd">        :param duration: duration to average over, in seconds, e.g. 300 would return the</span>
+<span class="sd">                         average traded price over the last 5 minutes</span>
+<span class="sd">        :type duration: int</span>
+<span class="sd">        :return: volume weighted average trading price (returns ``None`` if there are no</span>
+<span class="sd">                 trades for this stock)</span>
+<span class="sd">        :rtype: float or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">trades</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trades</span>
+                  <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">stock</span><span class="o">.</span><span class="n">symbol</span> <span class="o">==</span> <span class="n">symbol</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                  <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">&gt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">duration</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">trades</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Trade</span><span class="o">.</span><span class="n">vol_weighted_price</span><span class="p">(</span><span class="n">trades</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="Exchange.all_share_index"><a class="viewcode-back" href="../index.html#sssm.Exchange.all_share_index">[docs]</a>    <span class="k">def</span> <span class="nf">all_share_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the exchange&#39;s All Share Index over a certain duration</span>
+
+<span class="sd">        :param duration: duration to average over, in seconds, e.g. 300 would return the</span>
+<span class="sd">                         index over the last 5 minutes</span>
+<span class="sd">        :type duration: int</span>
+<span class="sd">        :return: the All Share Index (returns ``None`` if there are no trades at all)</span>
+<span class="sd">        :rtype: float or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># sorting needed for `groupby` function</span>
+        <span class="n">trades</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trades</span>
+                         <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">&gt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+                                           <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">duration</span><span class="p">)],</span>
+                        <span class="n">key</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s">&#39;stock.symbol&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">trades</span><span class="p">:</span>
+            <span class="n">stock_groups</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="n">trades</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s">&#39;stock.symbol&#39;</span><span class="p">))</span>
+            <span class="n">prices</span> <span class="o">=</span> <span class="p">[</span><span class="n">Trade</span><span class="o">.</span><span class="n">vol_weighted_price</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">trades</span><span class="p">))</span>
+                      <span class="k">for</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">trades</span> <span class="ow">in</span> <span class="n">stock_groups</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">reduce</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="n">prices</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">prices</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span></div></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Florenz Hollebrandse.
+      Last updated on 06/03/2016.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
