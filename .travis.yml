@@ -16,7 +16,7 @@ before_install:
 - source activate pyenv
 
 script:
-- nosetests --with-coverage
+- nosetests --with-cov --cover-package sssm
 
 after_success:
 - coveralls
