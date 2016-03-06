@@ -5,7 +5,7 @@ python:
 sudo: false
 
 install:
-- pip install nose
+- pip install nose coverage
 
 script:
 - nosetests --with-coverage --cover-package=sssm
