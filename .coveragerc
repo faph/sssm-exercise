@@ -1,2 +1,4 @@
 [run]
 source = ./sssm/*
+include = ./sssm/*
+omit = ./sssm/tests/*
