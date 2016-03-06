@@ -101,7 +101,7 @@ class Trade(object):
         self.action = action
         #: Stock price
         self.price = price
-        #: Date/time of trade (UTC)
+        #: Date/time of trade (UTC), set to current time automatically
         # Assume timestamp always correct when object created. Alternatively, this could
         # be implemented in the :func:`sssm.Exchange.record_trade` method if it's the role
         # of the exchange to timestamp trades.
@@ -129,7 +129,7 @@ class Exchange(object):
     """A stock exchange"""
 
     def __init__(self):
-        #: List of trades
+        #: List of trades (:class:`sssm.Trade`)
         self.trades = collections.deque()
 
     def __repr__(self):
