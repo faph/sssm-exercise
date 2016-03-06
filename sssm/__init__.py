@@ -183,8 +183,8 @@ class Exchange(object):
                         key=attrgetter('stock.symbol'))
         if trades:
             stock_groups = groupby(trades, key=attrgetter('stock.symbol'))
-            prices = [Trade.vol_weighted_price(list(trades)) for symbol, trades in
-                      stock_groups]
+            prices = [Trade.vol_weighted_price(list(trades))
+                      for symbol, trades in stock_groups]
             return reduce(mul, prices) ** (1 / len(prices))
         else:
             return None
