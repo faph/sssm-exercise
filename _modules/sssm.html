@@ -168,20 +168,36 @@
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s">&quot;&lt;CommonStock object `{}`&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">div_yield</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+<div class="viewcode-block" id="CommonStock.div_yield"><a class="viewcode-back" href="../index.html#sssm.CommonStock.div_yield">[docs]</a>    <span class="k">def</span> <span class="nf">div_yield</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the dividend yield for a given stock price</span>
+
+<span class="sd">        :param price: stock price, in pence</span>
+<span class="sd">        :type price: int or float</span>
+<span class="sd">        :return: dividend yield</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_div</span> <span class="o">/</span> <span class="n">price</span>
 
-</div>
+</div></div>
 <div class="viewcode-block" id="PreferredStock"><a class="viewcode-back" href="../index.html#sssm.PreferredStock">[docs]</a><span class="k">class</span> <span class="nc">PreferredStock</span><span class="p">(</span><span class="n">Stock</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A preferred stock&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s">&quot;&lt;PreferredStock object `{}`&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">div_yield</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+<div class="viewcode-block" id="PreferredStock.div_yield"><a class="viewcode-back" href="../index.html#sssm.PreferredStock.div_yield">[docs]</a>    <span class="k">def</span> <span class="nf">div_yield</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the dividend yield for a given stock price</span>
+
+<span class="sd">        :param price: stock price, in pence</span>
+<span class="sd">        :type price: int or float</span>
+<span class="sd">        :return: dividend yield</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_div</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_val</span> <span class="o">/</span> <span class="n">price</span>
 
-</div>
+</div></div>
 <span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Direction of a trade (buy or sell)&quot;&quot;&quot;</span>
     <span class="n">buy</span> <span class="o">=</span> <span class="mi">1</span>
@@ -299,7 +315,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2016, Florenz Hollebrandse.
-      Last updated on 06/03/2016.
+      Last updated on 07/03/2016.
     </p>
   </div>
 

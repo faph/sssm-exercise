@@ -326,6 +326,24 @@ index over the last 5 minutes</td>
 <em class="property">class </em><code class="descclassname">sssm.</code><code class="descname">CommonStock</code><span class="sig-paren">(</span><em>symbol</em>, <em>last_div</em>, <em>par_val</em>, <em>fixed_div=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sssm.html#CommonStock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sssm.CommonStock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sssm.Stock" title="sssm.Stock"><code class="xref py py-class docutils literal"><span class="pre">sssm.Stock</span></code></a></p>
 <p>A common stock</p>
+<dl class="method">
+<dt id="sssm.CommonStock.div_yield">
+<code class="descname">div_yield</code><span class="sig-paren">(</span><em>price</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sssm.html#CommonStock.div_yield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sssm.CommonStock.div_yield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the dividend yield for a given stock price</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>price</strong> (<em>int or float</em>) &#8211; stock price, in pence</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dividend yield</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -336,6 +354,24 @@ index over the last 5 minutes</td>
 <em class="property">class </em><code class="descclassname">sssm.</code><code class="descname">PreferredStock</code><span class="sig-paren">(</span><em>symbol</em>, <em>last_div</em>, <em>par_val</em>, <em>fixed_div=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sssm.html#PreferredStock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sssm.PreferredStock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sssm.Stock" title="sssm.Stock"><code class="xref py py-class docutils literal"><span class="pre">sssm.Stock</span></code></a></p>
 <p>A preferred stock</p>
+<dl class="method">
+<dt id="sssm.PreferredStock.div_yield">
+<code class="descname">div_yield</code><span class="sig-paren">(</span><em>price</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sssm.html#PreferredStock.div_yield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sssm.PreferredStock.div_yield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the dividend yield for a given stock price</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>price</strong> (<em>int or float</em>) &#8211; stock price, in pence</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dividend yield</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -351,7 +387,7 @@ index over the last 5 minutes</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2016, Florenz Hollebrandse.
-      Last updated on 06/03/2016.
+      Last updated on 07/03/2016.
     </p>
   </div>
 
