@@ -69,6 +69,14 @@ class CommonStock(Stock):
         return "<CommonStock object `{}`>".format(self.symbol)
 
     def div_yield(self, price):
+        """
+        Calculate the dividend yield for a given stock price
+
+        :param price: stock price, in pence
+        :type price: int or float
+        :return: dividend yield
+        :rtype: float
+        """
         return self.last_div / price
 
 
@@ -79,6 +87,14 @@ class PreferredStock(Stock):
         return "<PreferredStock object `{}`>".format(self.symbol)
 
     def div_yield(self, price):
+        """
+        Calculate the dividend yield for a given stock price
+
+        :param price: stock price, in pence
+        :type price: int or float
+        :return: dividend yield
+        :rtype: float
+        """
         return self.fixed_div * self.par_val / price
 
 
